@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="edireader-json-5.5.4-basic">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/edireader-json-5.5.4-basic.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>
