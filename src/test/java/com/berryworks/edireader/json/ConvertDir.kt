@@ -19,7 +19,12 @@ fun main(args: Array<String>) {
         val outFile = outDir.resolve(srcFile.name + ".json")
         srcFile.reader().use { reader ->
             outFile.writer().use { writer ->
-                ediToJson.asJson(reader, writer)
+                try {
+                    ediToJson.asJson(reader, writer)
+                } catch (e: Exception) {
+                    System.err.println("$srcFile error:")
+                    e.printStackTrace()
+                }
             }
         }
     }
