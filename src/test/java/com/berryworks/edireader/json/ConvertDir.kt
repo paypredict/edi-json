@@ -13,7 +13,11 @@ fun main(args: Array<String>) {
             .absoluteFile
             .also { if (!it.isDirectory) throw IOException("Out directory $it not found") }
 
-    val ediToJson = EdiToJson()
+    val ediToJson =
+        EdiToJson().apply {
+            isAnnotated = true
+            isFormatting = true
+        }
     for (srcFile in File(".").listFiles()) {
         if (!srcFile.isFile) continue
         val outFile = outDir.resolve(srcFile.name + ".json")
