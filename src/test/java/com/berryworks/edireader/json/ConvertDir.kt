@@ -53,7 +53,7 @@ fun main(args: Array<String>) {
                 outJsons.forEach { outJson ->
                     val outFile =
                         if (transform)
-                            outDir.resolve("${outJson.id} (${srcFile.name}).json") else
+                            outDir.resolve("${outJson._id} (${srcFile.name}).json") else
                             outDir.resolve("${srcFile.name}.json")
 
                     outFile.writer().use { writer ->
@@ -65,15 +65,16 @@ fun main(args: Array<String>) {
     }
 }
 
-private val JsonObject.id: String
-    get() {
-        val ISA = getJsonObject("ISA")!!
-        val ISA_09_Date = ISA.getString("ISA_09_Date", "")
-        val ISA_10_Time = ISA.getString("ISA_10_Time", "")
-        val ISA_13_InterchangeControlNumber = ISA.getString("ISA_13_InterchangeControlNumber", "")
-        val ST_01_TransactionSetIdentifierCode = getString("ST_01_TransactionSetIdentifierCode", "")
-        return "$ISA_09_Date-$ISA_10_Time-$ISA_13_InterchangeControlNumber-$ST_01_TransactionSetIdentifierCode"
-    }
+private val JsonObject._id: String
+    get() = getString("_id", "")
+
+private fun _id(st: JsonObject, ISA: JsonObject): String {
+    val ISA_09_Date = ISA.getString("ISA_09_Date", "")
+    val ISA_10_Time = ISA.getString("ISA_10_Time", "")
+    val ISA_13_InterchangeControlNumber = ISA.getString("ISA_13_InterchangeControlNumber", "")
+    val ST_01_TransactionSetIdentifierCode = st.getString("ST_01_TransactionSetIdentifierCode", "")
+    return "$ISA_09_Date-$ISA_10_Time-$ISA_13_InterchangeControlNumber-$ST_01_TransactionSetIdentifierCode"
+}
 
 private fun JsonObject.transform(): List<JsonObject> {
     val interchanges =
@@ -92,11 +93,13 @@ private fun JsonObject.transform(): List<JsonObject> {
             for (st in transactions) {
                 if (st !is JsonObject) continue
                 val item = Json.createObjectBuilder()
+                item.add("_id", _id(st, ISA))
                 item.add("ISA", ISA)
                 item.add("GS", GS)
                 st.forEach { name, value ->
                     item.add(name, value)
                 }
+
                 result += item.build()
             }
         }
